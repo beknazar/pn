@@ -1,0 +1,921 @@
+library(h2o)#
+h2o.init(nthreads=-1, max_mem_size='5G')#
+h2o.removeAll()
+h2o.shutdown(F)
+if ("package:h2o" %in% search()) { detach("package:h2o", unload=TRUE) }#
+if ("h2o" %in% rownames(installed.packages())) { remove.packages("h2o") }#
+#
+# Next, we download packages that H2O depends on.#
+pkgs <- c("RCurl","jsonlite")#
+for (pkg in pkgs) {#
+if (! (pkg %in% rownames(installed.packages()))) { install.packages(pkg) }#
+}#
+#
+# Now we download, install and initialize the H2O package for R.#
+install.packages("h2o", type="source", repos="http://h2o-release.s3.amazonaws.com/h2o/rel-xia/2/R")#
+#
+# Finally, let's load H2O and start up an H2O cluster#
+library(h2o)
+library(h2o)
+h2o.init(nthreads=-1, max_mem_size='5G')
+h2o.removeAll()
+setwd('~/Projects/pubNative/R')
+train <- read.csv('../db/training.csv', stringsAsFactors=F, sep=';')
+train <- read.csv('../db/train.csv', stringsAsFactors=F, sep=';')
+valid <- read.csv('../db/valid.csv', stringsAsFactors=F, sep=';')
+logical_columns <- c('v1', 'v9', 'v10', 'v12', 'v19')
+train[logical_columns][is.na(train[logical_columns])] <- F
+summary(train)
+)#
+valid <- read.csv('../db/valid.csv', stringsAsFactors=F
+train <- read.csv('../db/train.csv', stringsAsFactors=F)
+train <- read.csv('../db/train.csv', stringsAsFactors=F)
+valid <- read.csv('../db/valid.csv', stringsAsFactors=F)
+summary(train)
+summary(valid)
+logical_columns <- c('v1', 'v9', 'v10', 'v12', 'v19')
+train[logical_columns][is.na(train[logical_columns])] <- F
+valid[logical_columns][is.na(valid[logical_columns])] <- F
+for (col in logical_columns) {#
+	if (!(col %in% colnames(origin_df))) {#
+		print(col)#
+	}#
+}
+# Correct boolean datatype columns#
+for(col in logical_columns) {#
+	train[train[[col]] == 'False', c(col)] <- F#
+	train[train[[col]] == 'True', c(col)] <- T#
+	train[train[[col]] == 0, c(col)] <- F#
+	train[train[[col]] == 1, c(col)] <- T#
+	train[[col]] <- as.logical(train[[col]])#
+}
+summary(train)
+logical_columns <- c('v1', 'v9', 'v10', 'v12', 'v19', 'classLabel')
+train[logical_columns][is.na(train[logical_columns])] <- F#
+valid[logical_columns][is.na(valid[logical_columns])] <- F
+# Correct boolean datatype columns#
+for(col in logical_columns) {#
+	train[train[[col]] == 'False', c(col)] <- F#
+	train[train[[col]] == 'True', c(col)] <- T#
+	train[train[[col]] == 0, c(col)] <- F#
+	train[train[[col]] == 1, c(col)] <- T#
+	train[[col]] <- as.logical(train[[col]])#
+}
+summary(train)
+categorical_columns <- c('v4', 'v5', 'v6', 'v7', 'v13')
+categorical_columns <- c('v4', 'v5', 'v6', 'v7', 'v13')#
+for(col in categorical_columns) {#
+	train[[col]] <- as.factor(train[[col]])#
+}
+summary(train)
+logical_columns <- c('v1', 'v9', 'v10', 'v12', 'v19', 'classLabel')#
+#
+train[logical_columns][is.na(train[logical_columns])] <- F#
+valid[logical_columns][is.na(valid[logical_columns])] <- F#
+#
+# Correct boolean datatype columns#
+for(col in logical_columns) {#
+	train[train[[col]] == 'False', c(col)] <- F#
+	train[train[[col]] == 'True', c(col)] <- T#
+	train[train[[col]] == 0, c(col)] <- F#
+	train[train[[col]] == 1, c(col)] <- T#
+	train[[col]] <- as.logical(train[[col]])#
+	valid[valid[[col]] == 'False', c(col)] <- F#
+	valid[valid[[col]] == 'True', c(col)] <- T#
+	valid[valid[[col]] == 0, c(col)] <- F#
+	valid[valid[[col]] == 1, c(col)] <- T#
+	valid[[col]] <- as.logical(valid[[col]])#
+}
+summary(valid)
+categorical_columns <- c('v4', 'v5', 'v6', 'v7', 'v13')#
+for(col in categorical_columns) {#
+	train[[col]] <- as.factor(train[[col]])#
+	valid[[col]] <- as.factor(valid[[col]])#
+}
+summary(valid)
+train_h2o <- as.h2o(train)
+valid_h2o <- as.h2o(valid)
+response <- 'classLabel'
+predictors <- setdiff(names(train), response)
+predictors
+rf1 <- h2o.randomForest(#
+  training_frame = train_h2o,#
+  validation_frame = valid_h2o,#
+  x=predictors,#
+  y=response,#
+  model_id = 'rf1',#
+  ntrees = 200,#
+  max_depth = 60,#
+  stopping_rounds = 2,#
+  stopping_tolerance = 1e-2,#
+   score_each_iteration = T,#
+  seed=3000000)
+accuracy <- h2o.auc(rf1, valid=T) * 100
+accuracy <- round(accuracy, 2)
+print(paste(accuracy, '%'))
+not_fs <- c('c19')
+train_h2o <- as.h2o(train)#
+valid_h2o <- as.h2o(valid)
+response <- 'classLabel'#
+predictors <- setdiff(names(train), response)#
+predictors <- setdiff(predictors, not_fs)
+predictors
+not_fs
+not_fs <- c('v19')#
+#
+train_h2o <- as.h2o(train)#
+valid_h2o <- as.h2o(valid)#
+response <- 'classLabel'#
+predictors <- setdiff(names(train), response)#
+predictors <- setdiff(predictors, not_fs)
+rf1 <- h2o.randomForest(#
+  training_frame = train_h2o,#
+  validation_frame = valid_h2o,#
+  x=predictors,#
+  y=response,#
+  model_id = 'rf1',#
+  ntrees = 200,#
+  max_depth = 60,#
+  stopping_rounds = 2,#
+  stopping_tolerance = 1e-2,#
+   score_each_iteration = T,#
+  seed=3000000)
+accuracy <- h2o.auc(rf1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+varimp <- as.data.frame(h2o.varimp(rf1))
+varimp
+rf1 <- h2o.randomForest(#
+  training_frame = train_h2o,#
+  validation_frame = valid_h2o,#
+  x=predictors,#
+  y=response,#
+  model_id = 'rf1',#
+  ntrees = 50,#
+  max_depth = 20,#
+  stopping_rounds = 2,#
+  stopping_tolerance = 1e-2,#
+   score_each_iteration = T,#
+  seed=3000000)#
+accuracy <- h2o.auc(rf1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+rf1 <- h2o.randomForest(#
+  training_frame = train_h2o,#
+  validation_frame = valid_h2o,#
+  x=predictors,#
+  y=response,#
+  model_id = 'rf1',#
+  ntrees = 50,#
+  max_depth = 20,#
+  stopping_rounds = 2,#
+  stopping_tolerance = 1e-2,#
+  score_each_iteration = T,#
+  seed=10)#
+accuracy <- h2o.auc(rf1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+rf1 <- h2o.randomForest(#
+  training_frame = train_h2o,#
+  validation_frame = valid_h2o,#
+  x=predictors,#
+  y=response,#
+  model_id = 'rf1',#
+  ntrees = 1000,#
+  max_depth = 100,#
+  stopping_rounds = 2,#
+  stopping_tolerance = 1e-2,#
+  score_each_iteration = T,#
+  seed=10)#
+accuracy <- h2o.auc(rf1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+rf1 <- h2o.randomForest(#
+  training_frame = train_h2o,#
+  validation_frame = valid_h2o,#
+  x=predictors,#
+  y=response,#
+  model_id = 'rf1',#
+  ntrees = 50,#
+  max_depth = 5,#
+  stopping_rounds = 2,#
+  stopping_tolerance = 1e-2,#
+  score_each_iteration = T,#
+  seed=10)
+accuracy <- h2o.auc(rf1, valid=T) * 100#
+accuracy <- round(accuracy, 2)
+print(paste(accuracy, '%'))
+rf1 <- h2o.randomForest(#
+  training_frame = train_h2o,#
+  validation_frame = valid_h2o,#
+  x=predictors,#
+  y=response,#
+  model_id = 'rf1',#
+  ntrees = 50,#
+  max_depth = 3,#
+  stopping_rounds = 2,#
+  stopping_tolerance = 1e-2,#
+  score_each_iteration = T,#
+  seed=10)#
+accuracy <- h2o.auc(rf1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+rf1
+rf1 <- h2o.randomForest(#
+  training_frame = train_h2o,#
+  validation_frame = valid_h2o,#
+  x=predictors,#
+  y=response,#
+  model_id = 'rf1',#
+  ntrees = 50,#
+  max_depth = 5,#
+  stopping_rounds = 2,#
+  stopping_tolerance = 1e-2,#
+  score_each_iteration = T,#
+  seed=10)#
+accuracy <- h2o.auc(rf1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+rf1
+varimp <- as.data.frame(h2o.varimp(rf1))
+varimp
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.2,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 10)
+# Number of CV folds (to generate level-one data for stacking)#
+nfolds <- 5#
+#
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.2,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 10)
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm
+gbm1
+varimp <- as.data.frame(h2o.varimp(gbm1))
+varimp
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 50,#
+               max_depth = 10,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 10)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 5,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 10)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 5,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 10)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 10)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 1,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 3,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.05,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.2,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+nfolds <- 7#
+#
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+nfolds <- 5#
+#
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+dl1 <- h2o.deeplearning(#
+  model_id="dl1", #
+  training_frame=train_h2, #
+  validation_frame=valid_h2,#
+  x=predictors,#
+  y=response,#
+  activation="Rectifier",#
+  hidden=c(200,200),#
+  epochs=5,#
+  variable_importances=T#
+)
+dl1 <- h2o.deeplearning(#
+  model_id="dl1", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o,#
+  x=predictors,#
+  y=response,#
+  activation="Rectifier",#
+  hidden=c(200,200),#
+  epochs=5,#
+  variable_importances=T#
+)
+accuracy <- h2o.auc(dl1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+dl1 <- h2o.deeplearning(#
+  model_id="dl1", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o,#
+  x=predictors,#
+  y=response,#
+  activation="Rectifier",#
+  hidden=c(200, 200, 200),#
+  epochs=5,#
+  variable_importances=T#
+)#
+# summary(m1)#
+accuracy <- h2o.auc(dl1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+dl1 <- h2o.deeplearning(#
+  model_id="dl1", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o,#
+  x=predictors,#
+  y=response,#
+  activation="Rectifier",#
+  hidden=c(200, 200, 200, 200),#
+  epochs=5,#
+  variable_importances=T#
+)#
+# summary(m1)#
+accuracy <- h2o.auc(dl1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+dl1 <- h2o.deeplearning(#
+  model_id="dl1", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o,#
+  x=predictors,#
+  y=response,#
+  activation="Rectifier",#
+  hidden=c(200, 200, 200),#
+  epochs=10,#
+  variable_importances=T#
+)#
+# summary(m1)#
+accuracy <- h2o.auc(dl1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+dl1 <- h2o.deeplearning(#
+  model_id="dl1", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o,#
+  x=predictors,#
+  y=response,#
+  activation="Rectifier",#
+  hidden=c(200, 200, 200, 200),#
+  epochs=10,#
+  variable_importances=T#
+)#
+# summary(m1)#
+accuracy <- h2o.auc(dl1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+dl1 <- h2o.deeplearning(#
+  model_id="dl1", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o,#
+  x=predictors,#
+  y=response,#
+  activation="Rectifier",#
+  hidden=c(200, 200, 200),#
+  epochs=6,#
+  variable_importances=T#
+)#
+# summary(m1)#
+accuracy <- h2o.auc(dl1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+m2 <- h2o.deeplearning(#
+  model_id="dl_model_tuned", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o, #
+  x=predictors, #
+  y=response, #
+  overwrite_with_best_model=F,    ## Return the final model after 10 epochs, even if not the best#
+  hidden=c(128,128,128),          ## more hidden layers -> more complex interactions#
+  epochs=10,                      ## to keep it short enough#
+  score_validation_samples=10000, ## downsample validation set for faster scoring#
+  score_duty_cycle=0.025,         ## don't score more than 2.5% of the wall time#
+  adaptive_rate=F,                ## manually tuned learning rate#
+  rate=0.01, #
+  rate_annealing=2e-6,            #
+  momentum_start=0.2,             ## manually tuned momentum#
+  momentum_stable=0.4, #
+  momentum_ramp=1e7, #
+  l1=1e-5,                        ## add some L1/L2 regularization#
+  l2=1e-5,#
+  max_w2=10                       ## helps stability for Rectifier#
+) #
+#
+accuracy <- h2o.auc(m2, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+m2 <- h2o.deeplearning(#
+  model_id="dl_model_tuned", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o, #
+  x=predictors, #
+  y=response, #
+  overwrite_with_best_model=F,    ## Return the final model after 10 epochs, even if not the best#
+  hidden=c(128,128,128, 128),          ## more hidden layers -> more complex interactions#
+  epochs=10,                      ## to keep it short enough#
+  score_validation_samples=10000, ## downsample validation set for faster scoring#
+  score_duty_cycle=0.025,         ## don't score more than 2.5% of the wall time#
+  adaptive_rate=F,                ## manually tuned learning rate#
+  rate=0.01, #
+  rate_annealing=2e-6,            #
+  momentum_start=0.2,             ## manually tuned momentum#
+  momentum_stable=0.4, #
+  momentum_ramp=1e7, #
+  l1=1e-5,                        ## add some L1/L2 regularization#
+  l2=1e-5,#
+  max_w2=10                       ## helps stability for Rectifier#
+) #
+#
+accuracy <- h2o.auc(m2, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+m2 <- h2o.deeplearning(#
+  model_id="dl_model_tuned", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o, #
+  x=predictors, #
+  y=response, #
+  overwrite_with_best_model=F,    ## Return the final model after 10 epochs, even if not the best#
+  hidden=c(128,128,128, 128, 128),          ## more hidden layers -> more complex interactions#
+  epochs=20,                      ## to keep it short enough#
+  score_validation_samples=10000, ## downsample validation set for faster scoring#
+  score_duty_cycle=0.025,         ## don't score more than 2.5% of the wall time#
+  adaptive_rate=F,                ## manually tuned learning rate#
+  rate=0.01, #
+  rate_annealing=2e-6,            #
+  momentum_start=0.2,             ## manually tuned momentum#
+  momentum_stable=0.4, #
+  momentum_ramp=1e7, #
+  l1=1e-5,                        ## add some L1/L2 regularization#
+  l2=1e-5,#
+  max_w2=10                       ## helps stability for Rectifier#
+) #
+#
+accuracy <- h2o.auc(m2, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+m2 <- h2o.deeplearning(#
+  model_id="dl_model_tuned", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o, #
+  x=predictors, #
+  y=response, #
+  overwrite_with_best_model=F,    ## Return the final model after 10 epochs, even if not the best#
+  hidden=c(128,128,128),          ## more hidden layers -> more complex interactions#
+  epochs=20,                      ## to keep it short enough#
+  score_validation_samples=10000, ## downsample validation set for faster scoring#
+  score_duty_cycle=0.025,         ## don't score more than 2.5% of the wall time#
+  adaptive_rate=T,                ## manually tuned learning rate#
+  rate=0.01, #
+  rate_annealing=2e-6,            #
+  momentum_start=0.2,             ## manually tuned momentum#
+  momentum_stable=0.4, #
+  momentum_ramp=1e7, #
+  l1=1e-5,                        ## add some L1/L2 regularization#
+  l2=1e-5,#
+  max_w2=10                       ## helps stability for Rectifier#
+) #
+#
+accuracy <- h2o.auc(m2, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+m2 <- h2o.deeplearning(#
+  model_id="dl_model_tuned", #
+  training_frame=train_h2o, #
+  validation_frame=valid_h2o, #
+  x=predictors, #
+  y=response, #
+  overwrite_with_best_model=F,    ## Return the final model after 10 epochs, even if not the best#
+  hidden=c(128,128,128),          ## more hidden layers -> more complex interactions#
+  epochs=10,                      ## to keep it short enough#
+  score_validation_samples=10000, ## downsample validation set for faster scoring#
+  score_duty_cycle=0.025,         ## don't score more than 2.5% of the wall time#
+  adaptive_rate=F,                ## manually tuned learning rate#
+  rate=0.01, #
+  rate_annealing=2e-6,            #
+  momentum_start=0.2,             ## manually tuned momentum#
+  momentum_stable=0.4, #
+  momentum_ramp=1e7, #
+  l1=1e-5,                        ## add some L1/L2 regularization#
+  l2=1e-5,#
+  max_w2=10                       ## helps stability for Rectifier#
+) #
+#
+accuracy <- h2o.auc(m2, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+nfolds <- 5#
+#
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+summary(gbm1)
+h2o.performance(gbm1, valid=T)
+perf <- h2o.performance(gbm1, valid=T)
+perf
+perf <- h2o.performance(gbm1, measure="F1", valid=T)
+gbm1.f1
+gbm1.F1
+gbm1.F1()
+summary(gbm1)
+h2o.logloss
+h2o.logloss(dbm1)
+h2o.logloss('dbm1')
+h2o.logloss(dbm1)
+h2o.logloss(dbm1, valid=T)
+h2o.logloss(gbm1, valid=T)
+accuracy = h2o.logloss(gbm1, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy = h2o.logloss(rf1, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy = h2o.logloss(dl1, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy = h2o.logloss(m2, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+nfolds <- 5#
+#
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+# accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy = h2o.logloss(gbm1, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               stopping_metric = 'logloss',#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+# accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 5,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               stopping_metric = 'logloss',#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+# accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+# accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 5,#
+               max_depth = 2,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               stopping_metric = 'logloss',#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+# accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy <- h2o.auc(gbm1, valid=T) * 100#
+# accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)
+print(paste(accuracy, '%'))
+accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 5,#
+               max_depth = 2,#
+               min_rows = 2,#
+               learn_rate = 0.05,#
+               nfolds = nfolds,#
+               stopping_metric = 'logloss',#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+# accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy = h2o.logloss(gbm1, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+print(paste('Logloss:', accuracy))
+summary(gbm1)
+nfolds <- 5#
+#
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 20,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               stopping_metric = 'logloss',#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+# accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy = h2o.logloss(gbm1, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste('Logloss:', accuracy))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 10,#
+               max_depth = 3,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               stopping_metric = 'logloss',#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+# accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy = h2o.logloss(gbm1, valid=T) * 100#
+accuracy <- round(accuracy, 2)#
+print(paste(accuracy, '%'))
+accuracy = h2o.logloss(gbm1, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste('LogLoss:', accuracy))
+gbm1 = h2o.gbm(x = predictors,#
+               y = response,#
+			   training_frame = train_h2o,#
+			   validation_frame = valid_h2o,#
+               distribution = "bernoulli",#
+               ntrees = 100,#
+               max_depth = 10,#
+               min_rows = 2,#
+               learn_rate = 0.1,#
+               nfolds = nfolds,#
+               stopping_metric = 'logloss',#
+               fold_assignment = "Modulo",#
+               keep_cross_validation_predictions = TRUE,#
+               seed = 1)#
+#
+# accuracy <- h2o.auc(gbm1, valid=T) * 100#
+accuracy = h2o.logloss(gbm1, valid=T)#
+accuracy <- round(accuracy, 2)#
+print(paste('LogLoss:', accuracy))
